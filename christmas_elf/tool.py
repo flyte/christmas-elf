@@ -32,5 +32,9 @@ if __name__ == "__main__":
         step = float(total_presents) / presents[person]["amount"]
         for j in range(1, presents[person]["amount"]+1):
             ts[float("%s%s" % (step*j, i+1))] = person
+    given = 0
     for score, name in sorted(ts.items(), key=lambda x: x[0]):
-        print "%s (%s)" % (name, score)
+        given += 1
+        raw_input("Give %s a present! (%d remaining)" % (name, total_presents-given))
+
+    print "All presents presented!"
