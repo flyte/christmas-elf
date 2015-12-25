@@ -1,7 +1,5 @@
 from collections import deque
 
-from ipdb import set_trace
-
 
 presents = {}
 
@@ -16,11 +14,6 @@ def get_a_number(msg, first=True):
         return get_a_number(msg, first=False)
 
 
-worthiest_recipient = lambda presents: sorted(
-    presents.items(), key=lambda x: x[1]["counter"], reverse=True
-)[0][0]
-
-
 if __name__ == "__main__":
     # Ask the user to add recipients
     while True:
@@ -33,20 +26,11 @@ if __name__ == "__main__":
     for recipient in presents:
         presents[recipient]["amount"] = get_a_number("How many presents does %s have? " % recipient)
 
-    highest_amt = max(recipient["amount"] for recipient in presents.values())
+    ts = {}
     total_presents = sum(recipient["amount"] for recipient in presents.values())
-    for person in presents:
-        presents[person]["probability"] = presents[person]["amount"] / float(total_presents)
-
-    queue = deque()
-    for _ in xrange(highest_amt * len(presents)):
-        print "Before adding: %s " % presents
-        # Add each recipients probability to their counter
-        for recipient in presents:
-            presents[recipient]["counter"] += presents[recipient]["probability"]
-        print "After adding: %s " % presents
-        # Get the highest counter, add their name to the queue and set the counter to 0
-        recipient = worthiest_recipient(presents)
-        print "Worthiest recipient: %s" % recipient
-        queue.appendleft(recipient)
-        presents[recipient]["counter"] = 0
+    for i, person in enumerate(presents):
+        step = float(total_presents) / presents[person]["amount"]
+        for j in range(1, presents[person]["amount"]+1):
+            ts[float("%s%s" % (step*j, i+1))] = person
+    for score, name in sorted(ts.items(), key=lambda x: x[0]):
+        print "%s (%s)" % (name, score)
